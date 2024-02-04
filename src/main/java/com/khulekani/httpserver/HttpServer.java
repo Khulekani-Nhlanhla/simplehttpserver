@@ -1,5 +1,6 @@
 package com.khulekani.httpserver;
 
+import com.khulekani.httpserver.config.Configuration;
 import com.khulekani.httpserver.config.ConfigurationManager;
 
 /*
@@ -10,5 +11,9 @@ public class HttpServer {
         System.out.println("Server Starting....");
 
         ConfigurationManager.getInstance().loadConfigurationFile("src/main/resources/http.json");
+        Configuration conf = ConfigurationManager.getInstance().getCurrentConfiguration();
+
+        System.out.println("Using Port: " + conf.getPort());
+        System.out.println("Using WebRoot: " + conf.getWebroot());
     }
 }
