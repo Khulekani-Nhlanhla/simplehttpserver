@@ -29,7 +29,10 @@ public class ConfigurationManager {
         myCurrentConfiguration = Json.fromJson(conf, Configuration.class);
     }
     /*Returns the Current loaded Configuration*/
-    public void getCurrentConfiguration(){
-
+    public Configuration getCurrentConfiguration(){
+    if( myCurrentConfiguration == null){
+        throw new HttpConfigurationException;
+    }
+    return myCurrentConfiguration;
     }
 }
