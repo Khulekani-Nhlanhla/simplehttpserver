@@ -1,9 +1,7 @@
 package com.khulekani.httpserver.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 
 import java.io.IOException;
 
@@ -29,5 +27,19 @@ public class Json {
         return myObjectMapper.valueToTree(obj);
     }
 
+    public static String stringify(JsonNode node) throws JsonProcessingException {
+        return generateJson(node ,false);
+    }
+
+    public static String stringifyPretty(JsonNode node) throws JsonProcessingException {
+        return generateJson(node ,true);
+    }
+    public static String generateJson(Object o , boolean pretty) throws JsonProcessingException {
+        ObjectWriter objectWriter = myObjectMapper.writer();
+        if(pretty){
+            objectWriter = objectWriter.with(SerializationFeature.INDENT_OUTPUT);
+        }
+        return  objectWriter.writeValueAsString(o);
+    }
 
 }
