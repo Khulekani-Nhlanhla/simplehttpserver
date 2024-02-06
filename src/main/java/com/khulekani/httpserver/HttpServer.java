@@ -2,6 +2,7 @@ package com.khulekani.httpserver;
 
 import com.khulekani.httpserver.config.Configuration;
 import com.khulekani.httpserver.config.ConfigurationManager;
+import com.khulekani.httpserver.core.ServerListenerThread;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,31 +23,12 @@ public class HttpServer {
         System.out.println("Using Port: " + conf.getPort());
         System.out.println("Using WebRoot: " + conf.getWebroot());
 
-        /*Used to listen to a specific port*/
         try {
-            ServerSocket serverSocket = new ServerSocket(conf.getPort());
-            Socket socket = serverSocket.accept();
-
-            InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
-
-            String html = "<html><head><title>Simple Java Http Server</title></head><body><h1>This page was served using my Simple java server</h1></body></html>";
-
-            final String CRLF = "\n\r"; //13. 10
-
-            String response = "HTTP/1.1 200 OK " + CRLF+ // Status Line : Http version Response_code Response Message
-                                "Content-Length: " + html.getBytes().length + CRLF + //Header
-                                    CRLF+
-                                    html+
-                                    CRLF + CRLF;
-            outputStream.write(response.getBytes());
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-            serverSocket.close();
-
+            ServerListenerThread serverListenerThread = new ServerListenerThread(conf.getPort(),conf.getWebroot());
+            serverListenerThread.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
+
         }
 
 
