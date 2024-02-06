@@ -1,5 +1,8 @@
 package com.khulekani.httpserver.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,7 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerListenerThread extends Thread{
-
+    private final static Logger LOGGER = LoggerFactory.getLogger(ServerListenerThread.class);
     private int port;
     private String webroot;
     private ServerSocket serverSocket;
@@ -28,26 +31,29 @@ public class ServerListenerThread extends Thread{
     public void run(){
         /*Used to listen to a specific port*/
         try {
+            while(serverSocket.isBound() && !serverSocket.isClosed()) {
+                Socket socket = serverSocket.accept();
 
-            Socket socket = serverSocket.accept();
+                LOGGER.info(" * Connection accepted: " + socket.getInetAddress());
 
-            InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
+                InputStream inputStream = socket.getInputStream();
+                OutputStream outputStream = socket.getOutputStream();
 
-            String html = "<html><head><title>Simple Java Http Server</title></head><body><h1>This page was served using my Simple java server</h1></body></html>";
+                String html = "<html><head><title>Simple Java Http Server</title></head><body><h1>This page was served using my Simple java server</h1></body></html>";
 
-            final String CRLF = "\n\r"; //13. 10
+                final String CRLF = "\n\r"; //13. 10
 
-            String response = "HTTP/1.1 200 OK " + CRLF+ // Status Line : Http version Response_code Response Message
-                    "Content-Length: " + html.getBytes().length + CRLF + //Header
-                    CRLF+
-                    html+
-                    CRLF + CRLF;
-            outputStream.write(response.getBytes());
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-            serverSocket.close();
+                String response = "HTTP/1.1 200 OK " + CRLF + // Status Line : Http version Response_code Response Message
+                        "Content-Length: " + html.getBytes().length + CRLF + //Header
+                        CRLF +
+                        html +
+                        CRLF + CRLF;
+                outputStream.write(response.getBytes());
+                inputStream.close();
+                outputStream.close();
+                socket.close();
+            }
+            // serverSocket.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
