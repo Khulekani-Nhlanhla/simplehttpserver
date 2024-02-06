@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerListenerThread extends Thread{
+public class ServerListenerThread extends Thread {
     private final static Logger LOGGER = LoggerFactory.getLogger(ServerListenerThread.class);
     private int port;
     private String webroot;
@@ -28,34 +28,20 @@ public class ServerListenerThread extends Thread{
     }
 
     @Override
-    public void run(){
+    public void run() {
         /*Used to listen to a specific port*/
         try {
-            while(serverSocket.isBound() && !serverSocket.isClosed()) {
+            while (serverSocket.isBound() && !serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
 
                 LOGGER.info(" * Connection accepted: " + socket.getInetAddress());
 
-                InputStream inputStream = socket.getInputStream();
-                OutputStream outputStream = socket.getOutputStream();
+                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket);
+                workerThread.start();
+                // serverSocket.close();
 
-                String html = "<html><head><title>Simple Java Http Server</title></head><body><h1>This page was served using my Simple java server</h1></body></html>";
-
-                final String CRLF = "\n\r"; //13. 10
-
-                String response = "HTTP/1.1 200 OK " + CRLF + // Status Line : Http version Response_code Response Message
-                        "Content-Length: " + html.getBytes().length + CRLF + //Header
-                        CRLF +
-                        html +
-                        CRLF + CRLF;
-                outputStream.write(response.getBytes());
-                inputStream.close();
-                outputStream.close();
-                socket.close();
             }
-            // serverSocket.close();
-
-        } catch (IOException e) {
+        }catch(IOException e){
             throw new RuntimeException(e);
         }
     }
