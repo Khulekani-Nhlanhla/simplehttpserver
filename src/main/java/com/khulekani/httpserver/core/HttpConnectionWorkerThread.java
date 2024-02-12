@@ -22,11 +22,16 @@ public class HttpConnectionWorkerThread extends Thread{
              inputStream = socket.getInputStream();
              outputStream = socket.getOutputStream();
 
+            int _byte;
+
+            while ( (_byte = inputStream.read()) >= 0){
+                System.out.println((char)_byte);
+            }
             String html = "<html><head><title>Simple Java Http Server</title></head><body><h1>This page was served using my Simple java server</h1></body></html>";
 
-            final String CRLF = "\n\r"; //13. 10
+            final String CRLF = "\n\r"; // 13. 10
 
-            String response = "HTTP/1.1 200 OK " + CRLF + // Status Line : Http version Response_code Response Message
+            String response = "HTTP/1.1 200 OK" + CRLF + // Status Line : Http version Response_code Response Message
                     "Content-Length: " + html.getBytes().length + CRLF + //Header
                     CRLF +
                     html +
