@@ -16,7 +16,7 @@ public class HttpParser {
     private static final int SP = 0x20; // 32 - Space
     private static final int CR = 0x0D; // 13 - Character Return
     private static final int LF = 0x0A; // 10 - Line Feed
-    public HttpRequest parseHttpRequest(InputStream inputStream){
+    public HttpRequest parseHttpRequest(InputStream inputStream) throws HttpParsingException {
         InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
 
         HttpRequest request = new HttpRequest();
@@ -30,7 +30,7 @@ public class HttpParser {
 
         return request;
     }
-    private void parseRequestLine(InputStreamReader reader , HttpRequest request) throws IOException {
+    private void parseRequestLine(InputStreamReader reader , HttpRequest request) throws IOException, HttpParsingException {
         StringBuilder processingDataBuffer = new StringBuilder();
 
         boolean methodParsed = false;
